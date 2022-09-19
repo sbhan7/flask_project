@@ -10,12 +10,17 @@
 
 <body>
     <form action="/result" method="POST">
+        <label for="username">Username:</label><br>
+        <input type="text" id="username" name="username"><br>
         <label for="email">Email:</label><br>
-        <input type="text" id="email" name="email" value="@gmail.com"><br>
+        <input type="email" id="email" name="eamil" value=""><br><br>
         <label for="password">Password:</label><br>
         <input type="password" id="password" name="password" value=""><br><br>
         <input type="submit" value="Submit">
       </form> 
+      {% for user in users %}
+        <h5>{{user.username}}</h5>
+      {% endfor %}
 </body>
 
 </html>
