@@ -1,10 +1,11 @@
 from crypt import methods
 from enum import unique
 import os
-from flask import Flask, render_template, request, make_response
+from flask import Flask, render_template, request, make_response, session
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+app.secret_key = '\xfd{H\xe5<\x95\xf9\xe3\x96.5\xd1\x01O<!\xd5\xa2\xa0\x9fR"\xa1\xa8'
 
 # make upload photo directory
 path = os.path.join("uploads/photo")
@@ -42,13 +43,25 @@ def index():
 def show_result():
     try:
       username = request.form['username']
-      email = request.form['eamil']
-    #   password = request.form['password']
-      user = User(username = username, email = email)
-      db.session.add(user)
-      db.session.commit()
+      email = request.form['email']
+      password = request.form['password']
       
-      response = make_response('sucssful save to db...') #this line can set render_template
+      # create Data CURAD
+    #   user = User(username = username, email = email)
+    #   db.session.add(user)
+    #   db.session.commit()
+    
+    #Set session
+      session['username'] = username
+      
+    # Update Data CRUD
+      goal = User.query.filter_by(username = session.get('username')).first()
+      goal.username = email
+      db.session.commit()
+            
+      response = make_response('sucssful save to db...') #this line can set render_template use this when use cookies
+      
+      # set Cookies
     #   response.set_cookie('user_email', email)
       return response
     except Exception as e:
