@@ -1,31 +1,15 @@
-from crypt import methods
-from enum import unique
 import os
+from models import User
+from test_app import app
 from flask import Flask, render_template, request, make_response, session
-from flask_sqlalchemy import SQLAlchemy
-
-app = Flask(__name__)
-app.secret_key = '\xfd{H\xe5<\x95\xf9\xe3\x96.5\xd1\x01O<!\xd5\xa2\xa0\x9fR"\xa1\xa8'
+from models import User, db
 
 # make upload photo directory
 path = os.path.join("uploads/photo")
 os.makedirs(path, exist_ok=True)
 
-# config database
-file_dir = os.path.dirname(__file__)
-db_dir = os.path.join(file_dir, 'app.db')
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///" + db_dir
-db = SQLAlchemy(app)
 
-# class ORM like django
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String, unique=True, nullable=False)
-    email = db.Column(db.String, nullable=False)
-    
-# FOR ONCE YOU CREATE THE DATABASE
-# db.create_all()
-    
+
 #check file format
 allowed_format = {'txt','jpg','png'}
 def check_file_format(fileName):
@@ -34,6 +18,7 @@ def check_file_format(fileName):
 # check cookies set or not
 @app.route('/')
 def index():
+  # Read data from db CURD
     users = User.query.all()
     return render_template('index.html', users = users)
 
@@ -90,7 +75,3 @@ def upload_result():
 @app.errorhandler(404)
 def show_error(error):
     return render_template('error_page.html'), 404
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
